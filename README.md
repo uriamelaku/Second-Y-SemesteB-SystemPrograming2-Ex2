@@ -1,4 +1,4 @@
-# Graph Class Implementation
+# Implementation of operators on Graph Class 
 ## Introduction
 This project consists of a C++ implementation of a graph class (Graph) with various functionalities for graph manipulation and operations. It includes overloaded operators to perform arithmetic operations, comparison, subset checking, and increment/decrement on graphs.
 
