@@ -1,5 +1,3 @@
-// ooriamelaku@gmail.com
-// 208734889
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 using namespace doctest;
