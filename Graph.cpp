@@ -57,7 +57,7 @@ namespace ariel{
 // g1 + g2
 Graph Graph::operator+(const Graph& other) const {
     if (this->graph.size() != other.graph.size()) {
-        cout << "Graphs must be of the same size to add" << endl;
+        cout << "Graphs must be of the same size for addition" << endl;
         exit(1);
     }
 
@@ -97,15 +97,6 @@ Graph Graph::operator-(const Graph& other) const {
         }
     }
 
-    // Check for negative elements in the resulting graph
-    for (size_t i = 0; i < result.graph.size(); ++i) {
-        for (size_t j = 0; j < result.graph[i].size(); ++j) {
-            if (result.graph[i][j] < 0) {
-                throw std::runtime_error("Error: Negative weight encountered");
-            }
-        }
-    }
-
     return result;
 }
 // g1 -= g2
@@ -120,9 +111,6 @@ Graph& Graph::operator-=(const Graph& other) {
 }
 // g1 *= 2
 Graph& Graph::operator*=(int scalar) {
-    if (scalar < 0) {
-        throw std::runtime_error("Error: scalar value cannot be negative");
-    }
     for (auto& row : this->graph) {
         for (auto& element : row) {
             element *= scalar;
@@ -132,17 +120,20 @@ Graph& Graph::operator*=(int scalar) {
 }
 // g1 * 2  // use the operator *=
 Graph Graph::operator*(int scalar) const {
-    if (scalar <= 0) {
-        throw std::runtime_error("Error: scalar value cannot be negative");
-    }
     Graph result = *this; // Create a copy of the current graph
     result *= scalar; // Use the *= operator to multiply the copy by the scalar
     return result;
 }
+
+// 2 * g1
+//Graph operator*(int scalar, const Graph& g) {
+//    return g * scalar;
+//}
+
 // g1 / 2 
 Graph Graph::operator/(double scalar) const {
-    if (scalar <= 0) {
-        throw std::runtime_error("Error: scalar value cannot be negative or zero");
+    if (scalar == 0) {
+        throw std::runtime_error("Error: scalar value cannot be zero");
     }
     Graph result = *this; // Create a copy of the current graph
     result /= scalar; // Use the *= operator to multiply the copy by the scalar
@@ -150,8 +141,8 @@ Graph Graph::operator/(double scalar) const {
 }
 // g1 /= 2  // use the operator /=
 Graph& Graph::operator/=(double scalar) {
-    if (scalar < 0) {
-        throw std::runtime_error("Error: scalar value cannot be negative");
+    if (scalar == 0) {
+        throw std::runtime_error("Error: scalar value cannot be zero");
     }
     for (auto& row : this->graph) {
         for (auto& element : row) {
@@ -164,12 +155,12 @@ Graph& Graph::operator/=(double scalar) {
 Graph Graph::operator*(const Graph& other) const {
     // Check if the number of columns in the first matrix equals the number of rows in the second matrix
     if (this->graph[0].size() != other.graph.size()) {
-        throw std::invalid_argument("Error: The number of columns in the first matrix must be equal to the number of rows in the second matrix.");
+        throw std::invalid_argument("Error: The matrix must be the same size");
     }
 
-    // Create a result matrix with dimensions of the first matrix's rows and the second matrix's columns
+    // Create a result matrix as big as the two matrices being multiplied
     Graph result;
-    result.graph.resize(this->graph.size(), std::vector<int>(other.graph[0].size(), 0));
+    result.graph.resize(this->graph.size(), std::vector<int>(this->graph[0].size(), 0));
 
     // Perform matrix multiplication
     for (size_t i = 0; i < this->graph.size(); ++i) {
@@ -198,11 +189,15 @@ Graph Graph::operator-() const {
 }
 // g1 == g2
 int Graph::operator==(const Graph& other) const {
+
+    // Check if the graphs are of the same size
     if (this->graph.size() != other.graph.size() || this->graph[0].size() != other.graph[0].size() ){
         return 0;
     }
     auto matrix1 = this->getMatrix();
     auto matrix2 = other.getMatrix();
+
+    // Check if the elements of the two matrices are equal
     for (size_t i = 0; i < matrix1.size(); ++i) {
         for (size_t j = 0; j < matrix1[i].size(); ++j) {
             if (matrix1[i][j] != matrix2[i][j]) {
@@ -230,6 +225,7 @@ size_t Graph::numEdges() const {
     return count;
 }
 
+// g1 is a subset of g2
 int Graph::isSubsetOf(const Graph& other) const {
 
     auto adjacencyMatrix = this->getMatrix();
@@ -242,9 +238,12 @@ int Graph::isSubsetOf(const Graph& other) const {
     }
     return 1;
 }
+
+// g1 is a proper subset of g2
 int Graph::isProperSubsetOf(const Graph& other) const {
     return isSubsetOf(other) && this->numEdges() < other.numEdges();
 }
+
 // g1 < g2
 bool Graph::operator<(const Graph& other) const {
     // case of g1 inside g2 and numEdges of g1 < numEdges of g2. return 1
@@ -259,7 +258,6 @@ bool Graph::operator<(const Graph& other) const {
     else if(this->numEdges() == other.numEdges()) {
         if(this->getMatrix().size() < other.getMatrix().size()){
             return true;
-
         }
         else{
             return false;

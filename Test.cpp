@@ -116,6 +116,18 @@ TEST_CASE("Test graph equality") {
     CHECK(g1 == g2);
 }
 
+// Test 6.5. devided by 0. edge case
+TEST_CASE("Test graph division by 0") {
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+
+    CHECK_THROWS(g1 / 0);
+}
+
 // Test 7 - g1 != 2
 TEST_CASE("Test graph inequality") {
     ariel::Graph g1;
@@ -152,6 +164,25 @@ TEST_CASE("Test operator < for graphs") {
 
     CHECK(g1 < g2);
     CHECK_FALSE(g2 < g1);
+}
+// Test 8.5. multiplication two graphs with different dimensions. edge case
+TEST_CASE("Test graph multiplication with different dimensions") {
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph1);
+
+    ariel::Graph g2;
+    vector<vector<int>> graph2 = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0},
+        {0, 1, 0}};
+    g2.loadGraph(graph2);
+
+    CHECK_THROWS(g1 * g2);
 }
 // Test 9 - g1 > 2
 TEST_CASE("Test operator > for graphs") {
@@ -198,6 +229,18 @@ TEST_CASE("Test operator<= for graphs") {
     CHECK(g1 <= g2);
     CHECK(g1 <= g3);
     CHECK_FALSE(g2 <= g1);
+}
+// Test 10.5. check graph with one element. edge case
+TEST_CASE("Test empty graph") {
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {{0}};
+    g1.loadGraph(graph1);
+
+    ariel::Graph g2;
+    vector<vector<int>> graph2 = {{0}};
+    g2.loadGraph(graph2);
+
+    CHECK(g1 == g2);
 }
 // Test 11 - g1 >= 2
 TEST_CASE("Test operator>= for graphs") {
@@ -268,6 +311,17 @@ TEST_CASE("Test graph pre-decrement") {
     --g1;
     CHECK(g1.toString() == "[-1, 0, -1], [0, -1, 0], [-1, 0, -1]");
 }
+
+// Test 14.5. try to load empty graph. edge case
+TEST_CASE("Test empty graph") {
+    ariel::Graph g1;
+    vector<vector<int>> graph = {};
+    g1.loadGraph(graph);
+    CHECK(g1.toString() == "");
+}
+
+
+
 // Test 15
 TEST_CASE("Test graph post-decrement") {
     ariel::Graph g1;
